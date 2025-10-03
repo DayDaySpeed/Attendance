@@ -1,0 +1,830 @@
+﻿<Window x:Class="Attendance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:pp="clr-namespace:PP.Wpf.Controls;assembly=PP.Wpf"
+        FontFamily="Microsoft YaHei"
+        xmlns:local="clr-namespace:Attendance"
+        xmlns:Converters="clr-namespace:Attendance.Converters"
+        xmlns:localBehaviors="clr-namespace:Attendance.Behaviors"
+        xmlns:Theme="clr-namespace:Attendance.Theme"
+        mc:Ignorable="d"
+        Title="Attendance Software"
+        WindowState="Maximized"
+        ResizeMode="CanResize"
+        SizeToContent="Manual"
+        Background="{Binding Background}"
+        Foreground="{Binding Foreground}">
+
+
+    <Window.Resources>
+        <!-- 集合可见性转换器 -->
+        <Converters:IfVisibility x:Key="ifv"/>
+        <!--请求转图标转换器-->
+        <Converters:IconKeyToImageConverter x:Key="IconKeyToImageConverter"/>
+        <!-- AQI 数值转颜色转换器 -->
+        <Converters:AirqualityToBrushConverter x:Key="AirqualityToBrushConverter"/>
+        <!--bool转可见性-->
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+        <!--简单的旋转动画-->
+        <Storyboard x:Key="FlipBookAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="BookCharacter"
+                     Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                     From="0" To="-5"
+                     Duration="0:0:2"
+                     AutoReverse="True" />
+        </Storyboard>
+    </Window.Resources>
+
+
+
+
+
+    <Grid >
+        <!--将Grid拆分-->
+        <Grid.RowDefinitions>
+            <!--表示第0行-->
+            <RowDefinition Height="Auto"/>
+            <!--表示第1行-->
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+
+
+
+        <!--顶部菜单-->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <!-- 左侧菜单 -->
+                <ColumnDefinition Width="Auto" />
+                <!-- 刷新菜单 -->
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧菜单 -->
+            <Menu Grid.Column="0">
+                <MenuItem Header="班级">
+                    <MenuItem Header="添加" Command="{Binding AddClassCommand}"/>
+                    <MenuItem Header="打开" Click="Button_import" />
+                </MenuItem>
+
+                <MenuItem Header="背景">
+                    <i:Interaction.Behaviors>
+                        <localBehaviors:CascadeSubmenuBehavior />
+                    </i:Interaction.Behaviors>
+
+                    <MenuItem Header="自定义图片">
+                        <MenuItem Header="导入" Command="{Binding ImportBackgroundCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="主题">
+
+                        <MenuItem Header="黑色" IsChecked="{Binding IsBlackTheme,Mode=OneWay}" Command="{Binding SetThemeCommand}" CommandParameter="{x:Static Theme:ThemePresets.BlackBackground}"/>
+                        <MenuItem Header="浅色" IsChecked="{Binding IsWhiteTheme,Mode=OneWay}" Command="{Binding SetThemeCommand}" CommandParameter="{x:Static Theme:ThemePresets.WhiteBackground}"/>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="作者">
+                    <MenuItem Header="天尽之" />
+                </MenuItem>
+
+            </Menu>
+
+            <!-- 右侧刷新菜单 -->
+            <Menu Grid.Column="1" HorizontalAlignment="Right">
+                <MenuItem Header="刷新">
+                    <MenuItem Header="全局刷新" Command="{Binding RefreshAllCommand}"/>
+                    <MenuItem Header="刷新天气" Command="{Binding RefreshTimeWeatherCommand}"/>
+                    <MenuItem Header="刷新诗词" Command="{Binding RefreshDailyPoemCommand}"/>
+                    <MenuItem Header="刷新句子" Command="{Binding RefreshDailyQuoteCommand}"/>
+                </MenuItem>
+            </Menu>
+        </Grid>
+
+
+
+        <!--内容区域-->
+        <Grid Grid.Row="1">
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <!-- 左侧可拉伸面板（初始宽度200） -->
+                    <ColumnDefinition Width="200" MinWidth="100" MaxWidth="400"/>
+                    <!-- 分割线（占1像素宽度） -->
+                    <ColumnDefinition Width="5"/>
+                    <!-- 右侧内容区域（占剩余空间） -->
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 左侧面板：高度自动占满父容器，可添加按钮 -->
+                <Border Grid.Column="0" >
+                    <!-- 核心：用Grid重叠两个控件，通过转换器控制可见性 -->
+                    <Grid>
+                        <!-- 班级列表：绑定Classes集合，双击事件，右键菜单 -->
+                        <Grid Visibility="{Binding Classes.Count, Converter={StaticResource ifv}}">
+                            <ListBox ItemsSource="{Binding Classes}" 
+                                     SelectionMode="Extended"
+
+
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch"
+                                     FontSize="24"   >
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction 
+            Command="{Binding ClassDoubleClickCommand}"
+            CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction 
+        Command="{Binding ClassSelectionChangedCommand}"
+        CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                                <i:Interaction.Behaviors>
+                                    <!-- ✅ 框选行为 -->
+                                    <localBehaviors:DragSelectBehavior />
+                                    <!--操作行为-->
+                                    <localBehaviors:SmartContextMenuBehavior>
+                                        <!--内容处行为-->
+                                        <localBehaviors:SmartContextMenuBehavior.ItemContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="删除班级" Command="{Binding Source={x:Static Application.Current}, Path=MainWindow.DataContext.DeleteSelectedClassesCommand}" />
+                                                <MenuItem Header="重命名"
+          Command="{Binding Source={x:Static Application.Current}, Path=MainWindow.DataContext.RenameClassCommand}"
+          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+
+
+
+                                            </ContextMenu>
+                                        </localBehaviors:SmartContextMenuBehavior.ItemContextMenu>
+                                        <!--空白处行为-->
+                                        <localBehaviors:SmartContextMenuBehavior.EmptyContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="添加班级" Command="{Binding AddClassCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image Source="/Resources/Images/add.png" Width="16" Height="16"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <Separator/>
+                                                <MenuItem Header="导入班级" Click="Button_import">
+                                                    <MenuItem.Icon>
+                                                        <Image Source="/Resources/Images/import.png" Width="16" Height="16"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <Separator/>
+                                                <MenuItem Header="刷新" Command="{Binding RefreshCommand}">
+                                                    <MenuItem.Icon>
+                                                        <Image Source="/Resources/Images/refresh.png" Width="16" Height="16"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </localBehaviors:SmartContextMenuBehavior.EmptyContextMenu>
+                                    </localBehaviors:SmartContextMenuBehavior>
+                                </i:Interaction.Behaviors>
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <!-- 编辑模式 -->
+                                            <TextBox Text="{Binding Name, Mode=TwoWay}"
+                         FontSize="24"
+                         Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <i:Interaction.Behaviors>
+                                                    <localBehaviors:SmartEditBehavior />
+                                                </i:Interaction.Behaviors>
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="LostFocus">
+                                                        <i:InvokeCommandAction 
+                                Command="{Binding DataContext.StopEditingCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBox>
+
+                                            <!-- 显示模式 -->
+                                            <TextBlock Text="{Binding Name}"
+                           FontSize="24"
+                           Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <i:Interaction.Behaviors>
+                        <localBehaviors:SlowClickRenameBehavior />
+                    </i:Interaction.Behaviors>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                        <!--没有班级的时候显示-->
+                        <StackPanel Visibility="{Binding Classes.Count, Converter={StaticResource ifv}, ConverterParameter=Inverse}"
+                                    HorizontalAlignment="Center"
+                                    Margin="20"
+                                    Orientation="Vertical">
+                            <!-- 按钮样式 -->
+                            <StackPanel.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontSize" Value="18"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#4A90E2"/>
+                                    <Setter Property="Padding" Value="20,12"/>
+                                    <!-- 增加内边距 -->
+                                    <Setter Property="Height" Value="50"/>
+                                    <!-- 固定高度 -->
+                                    <Setter Property="Width" Value="150"/>
+                                    <!-- 固定宽度 -->
+                                    <Setter Property="Margin" Value="0,10"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="Gray" BlurRadius="5" ShadowDepth="2"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#357ABD"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Resources>
+                            <!-- TextBlock 样式 -->
+                            <TextBlock Text="暂无班级数据"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#666"
+                                       Margin="0,0,0,15"
+                                       HorizontalAlignment="Center"/>
+                            <!-- 按钮 -->
+                            <Button Content="➕ 添加班级" Command="{Binding AddClassCommand}"/>
+                            <Button Content="📥 导入班级" Click="Button_import"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 分割器：允许拖动调整左侧面板宽度 -->
+                <GridSplitter Grid.Column="1" 
+                              HorizontalAlignment="Stretch"
+                              ResizeDirection="Columns"/>
+
+
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <!-- 时间显示行 -->
+                        <RowDefinition Height="3*"/>
+                        <!--分割线-->
+                        <RowDefinition Height="auto"/>
+                        <!-- 文本框行 -->
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+
+                    <!-- 天气时间显示区域 -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions x:Uid="Time">
+                            <!-- 第一列：剩余数据 -->
+                            <ColumnDefinition Width="492*" />
+                            <ColumnDefinition Width="auto" />
+                            <!-- 第二列：时间 + 城市 -->
+                            <ColumnDefinition Width="541*" />
+                            <ColumnDefinition Width="auto" />
+                            <!-- 第三列：天气预报 生活指数-->
+                            <ColumnDefinition Width="682*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 第一列：空气质量 + 天文信息 + 预警 -->
+                        <ScrollViewer Grid.Column="0" Margin="20,20,20,20" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <i:Interaction.Behaviors>
+                                <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="1" Direction="Up" LoopCount="2"/>
+                            </i:Interaction.Behaviors>
+                            <StackPanel>
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <!-- 当前温度-->
+                                <TextBlock  FontSize="{Binding TimeVM.BodyFontSize}">
+                                            <Run Text="当前温度："  FontSize="{Binding TimeVM.TitleFontSize}" />
+                                            <Run Text="{Binding TimeVM.Temperature}"  FontSize="{Binding TimeVM.BodyFontSize}" Foreground="Blue"/>
+                                </TextBlock>
+                                <!-- 降水整体描述 -->
+                                <TextBlock Text="{Binding TimeVM.PrecipSummary}" FontSize="{Binding TimeVM.TitleFontSize}" Margin="20" />
+
+                                <Separator/>
+                                <!-- 日出日落 -->
+                                <TextBlock Text="🌅 日出日落" FontSize="{Binding TimeVM.TitleFontSize}" Margin="20"/>
+
+                                <TextBlock  FontSize="{Binding TimeVM.BodyFontSize}">
+                                            <Run Text="日出："/>
+                                            <Run Text="{Binding TimeVM.Sunrise}"/>
+                                </TextBlock>
+                                <TextBlock  FontSize="{Binding TimeVM.BodyFontSize}">
+                                        <Run Text="日落："/>
+                                        <Run Text="{Binding TimeVM.Sunset}" />
+                                </TextBlock>
+
+                                <Separator/>
+                                <!-- 空气质量等级 -->
+                                <TextBlock Text="🌫️ 空气质量" FontSize="{Binding TimeVM.TitleFontSize}" Margin="20"/>
+                                <TextBlock FontSize="{Binding TimeVM.BodyFontSize}">
+                                        <Run Text="健康风险级别："/>
+                                        <Run Text="{Binding TimeVM.Category}" Foreground="{Binding TimeVM.Category,Converter={StaticResource AirqualityToBrushConverter}}"/>
+                                </TextBlock>
+                                <!-- AQI 数值 + 颜色 -->
+                                <TextBlock FontSize="{Binding TimeVM.BodyFontSize}">
+                                        <Run Text="AQI："/>
+                                        <Run Text="{Binding TimeVM.AQI}" Foreground="{Binding TimeVM.AQI, Converter={StaticResource AirqualityToBrushConverter}}"/>
+                                </TextBlock>
+
+                                <!-- 当 AQILevel 达到轻度污染及以上时显示主要污染物 -->
+                                <TextBlock FontSize="{Binding TimeVM.BodyFontSize}" Foreground="DarkRed">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TimeVM.Category}" Value="轻度污染">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding TimeVM.Category}" Value="中度污染">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding TimeVM.Category}" Value="重度污染">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding TimeVM.Category}" Value="严重污染">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                            <Run Text="主要污染物："/>
+                                            <Run Text="{Binding TimeVM.PrimaryPollutant}"/>
+                                </TextBlock>
+
+                                <Separator/>
+                                <!--月相-->
+                                <TextBlock  FontSize="{Binding TimeVM.BodyFontSize}"  Margin="20">
+                                    <Image Width="30" Height="30"
+                                            Source="{Binding TimeVM.MoonIconCode, Converter={StaticResource IconKeyToImageConverter}, ConverterParameter='#FFFFFF,#C0C0C0,#FFD27F,#BFAF9F'}"
+                                            />    
+                                    <Run Text="月相:"/>
+                                    <Run Text="{Binding TimeVM.MoonPhase}"/>
+                                </TextBlock>
+
+                                <Separator/>
+                                <!--太阳高度角-->
+                                <TextBlock FontSize="{Binding TimeVM.BodyFontSize}"  Margin="20">
+                                            <Run Text="太阳高度角："/>
+                                            <Run Text="{Binding TimeVM.SolarElevationAngle}" />
+                                </TextBlock>
+                                <!--分割线-->
+                                <Separator/>
+                                <!--预警信息-->
+                                <TextBlock Text="🚨 预警信息" FontSize="{Binding TimeVM.TitleFontSize}" Margin="20"/>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding TimeVM.WarningText}" FontSize="{Binding TimeVM.BodyFontSize}"/>
+                                <!--分割线-->
+                                <Separator/>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!--拉伸线-->
+                        <GridSplitter Grid.Column="1" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns"/>
+                        <!-- 第二列：时间 + 日期 + 星期 + 城市 -->
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0"  Margin="20,0,20,0">
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock Text="{Binding TimeVM.CurrentTime}" FontSize="90" FontWeight="Bold" Foreground="#007ACC" HorizontalAlignment="Center" />
+                                <TextBlock Text="{Binding TimeVM.CurrentDate}" FontSize="50" />
+                                <TextBlock Text="{Binding TimeVM.CurrentWeekday}" FontSize="40"  />
+                                <TextBlock Text="{Binding TimeVM.CityName}" FontSize="30" FontWeight="SemiBold"  />
+                            </StackPanel>
+                            <!--点名按钮-->
+                            <Button     Grid.Row="1"
+                                            Content="点名"
+                                            Style="{StaticResource RoundedGlowButton}"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            FontSize="30"
+                                            Click="RollCallButton_Click"/>
+                        </Grid>
+                        <!--拉伸线-->
+                        <GridSplitter Grid.Column="3" ResizeDirection="Columns"/>
+                        <!-- 第三列：天气预报 生活指数-->
+                        <Grid Grid.Column="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- 第一行：标题 -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- 第二行：走马灯展示 -->
+                                <RowDefinition Height="*"/>
+                                <!-- 第三行：滑动区域 -->
+                            </Grid.RowDefinitions>
+                            <!-- 第一行：标题 -->
+                            <StackPanel Grid.Row="0"  Margin="5,5">
+                                <StackPanel HorizontalAlignment="Center"  Orientation="Horizontal">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontSize" Value="22"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Margin" Value="0,0,0,10"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <TextBlock Text="🌦️ 天气预报"/>
+                                    <TextBlock Text="🧍 生活指数"/>
+                                    <TextBlock Text="☔ 降水趋势"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5,5">
+
+                                </StackPanel>
+                            </StackPanel>
+                            <!-- 第二行：走马灯展示 -->
+                            <pp:RunningText Grid.Row="1"
+                                                Text="{Binding TimeVM.CombinedText}"
+                                                Foreground="{StaticResource RainbowBrush}"
+                                                Direction="RightToLeft"
+                                                Speed="40"
+                                                Space="50"
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Padding="10"
+                                                Margin="10"/>
+                            <!-- 第三行：滑动区域 -->
+                            <ScrollViewer Grid.Row="2" Margin="10,10,10,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <i:Interaction.Behaviors>
+                                    <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="1" Direction="Up" LoopCount="1" AllowMousePause="False"/>
+                                </i:Interaction.Behaviors>
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding TimeVM.CombinedInfo}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!-- 用 Grid 来分列 -->
+                                                <Grid Margin="0,5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <!-- 图标列 -->
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <!-- 标签列 -->
+                                                        <ColumnDefinition Width="*"/>
+                                                        <!-- 描述列，占满剩余空间 -->
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- 图标 -->
+                                                    <Image Grid.Column="0"
+
+                                                                    Width="30" Height="30"
+                                                                    Source="{Binding IconKey, Converter={StaticResource IconKeyToImageConverter}, ConverterParameter='Red,Orange,Yellow,Green,Blue,Purple'}"
+                                                                    Margin="0,0,5,0"/>
+
+                                                    <!-- 标签 -->
+                                                    <TextBlock Grid.Column="1"
+                                                                    FontSize="{Binding FontSize}"                                                                                                            
+                                                                    Text="{Binding Category}"
+                                                                    Margin="0,0,5,0"
+                                                                    VerticalAlignment="Center"/>
+
+                                                    <!-- 描述（自动换行） -->
+                                                    <TextBlock Grid.Column="2"
+                                                                    Text="{Binding Description}"
+                                                                    TextWrapping="Wrap"
+                                                                    FontSize="{Binding FontSize}"
+                                                                    
+                                                                    VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Separator Margin="20"/>
+                                    <!-- 降水逐分钟数据（用 ItemsControl 展示，而不是 ListView） -->
+                                    <ItemsControl  ItemsSource="{Binding TimeVM.MinutelyPrecip}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding FxTime}" FontSize="{Binding FontSize}"  />
+                                                    <TextBlock Grid.Column="1" Text="{Binding Precip}" FontSize="{Binding FontSize}" HorizontalAlignment="Center" Foreground="Blue"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+
+
+
+                    <!-- 横向分割线 -->
+                    <GridSplitter Grid.Row="1"  ResizeDirection="Rows"/>
+                    <!-- 2. 文本框 -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <!-- 左列诗词 -->
+                            <ColumnDefinition Width="492*" SharedSizeGroup="Col1"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- 中列每日一言 -->
+                            <ColumnDefinition Width="541*" SharedSizeGroup="Col2"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- 右列诗词 -->
+                            <ColumnDefinition Width="682*" SharedSizeGroup="Col3"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- 左列：诗词竖排滚动 -->
+                        <!-- 横向滚动容器，从右向左排列 -->
+                        <!-- 古诗展示区 -->
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <!--第一列-->
+                                <ColumnDefinition Width="*"/>
+                                <!--分割线-->
+                                <ColumnDefinition Width="Auto"/>
+                                <!--第二列-->
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!--左边一首诗文-->
+                            <ScrollViewer Grid.Column="0"
+                                          HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Disabled"
+                                          FlowDirection="RightToLeft">
+                                <!--scrollviewer行为-->
+                                <i:Interaction.Behaviors>
+                                    <!--滚动行为-->
+                                    <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="0.8" Direction="Left" IsLooping="True"/>
+                                    <!--随文字拉伸行为-->
+                                    <localBehaviors:ScrollViewerSizeChangedBehavior />
+                                    <!--鼠标控制暂停行为-->
+                                    <localBehaviors:HorizontalScrollOnMouseWheelBehavior />
+                                </i:Interaction.Behaviors>
+
+                                <Grid RenderTransformOrigin="0,0">
+                                    <ItemsControl ItemsSource="{Binding DailyPoemVM1.PoemLines}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ItemsControl ItemsSource="{Binding}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding}"
+                                               FontSize="28"
+                                               FontFamily="KaiTi"
+                                               HorizontalAlignment="Center"
+                                               Margin="5"
+                                               TextAlignment="Center" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </ScrollViewer>
+
+                            <!--分割线-->
+                            <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
+
+                            <!--右边一首诗文-->
+                            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" FlowDirection="RightToLeft">
+                                <i:Interaction.Behaviors>
+                                    <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="0.8" Direction="Right" IsLooping="True"/>
+                                    <localBehaviors:ScrollViewerSizeChangedBehavior />
+                                    <localBehaviors:HorizontalScrollOnMouseWheelBehavior />
+                                </i:Interaction.Behaviors>
+
+
+
+                                <Grid RenderTransformOrigin="0,0">
+                                    <ItemsControl ItemsSource="{Binding DailyPoemVM2.PoemLines}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ItemsControl ItemsSource="{Binding}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding}"
+                                                                       FontSize="28"
+                                                                       FontFamily="KaiTi"
+                                                                       HorizontalAlignment="Center"
+                                                                       Margin="5"
+                                                                       TextAlignment="Center" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <!--分割线-->
+                        <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
+
+                        <!-- 中列：每日一言 -->
+
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <!-- 每日诗句 -->
+                            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <i:Interaction.Behaviors>
+                                    <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="0.5" Direction="Left" LoopCount="3"/>
+                                </i:Interaction.Behaviors>
+                                <StackPanel  HorizontalAlignment="Stretch" >
+                                    <TextBlock Text="{Binding DailyQuote.SentenceText}" FontFamily="FangSong"  FontSize="24" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <!--分割线-->
+                            <GridSplitter Grid.Row="1" ResizeDirection="Rows"/>
+                            <!-- 每日一言 -->
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <i:Interaction.Behaviors>
+                                    <localBehaviors:ScrollViewerLoopScrollBehavior IsEnabled="True" ScrollSpeed="0.5" Direction="Right" LoopCount="3"/>
+                                </i:Interaction.Behaviors>
+                                <StackPanel  HorizontalAlignment="Stretch" >
+                                    <TextBlock Text="{Binding DailyQuote.QuoteText}" FontSize="22" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <!--分割线-->
+                        <GridSplitter Grid.Column="3" ResizeDirection="Columns"/>
+
+                        <!-- 右列：诗词搜索 -->
+                        <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- 搜索栏 -->
+                            <Border Grid.Row="0" CornerRadius="8" Padding="10" Margin="0,0,0,10" Visibility="{Binding SearchVM.IsVisibility}">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FFB347" Offset="0.0"/>
+                                        <GradientStop Color="#D2691E" Offset="0.5"/>
+                                        <GradientStop Color="#C1440E" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                    <TextBox Width="220" Height="32" Text="{Binding SearchVM.Keyword}" FontSize="16" Margin="0,0,10,0" Padding="6" Background="White" BorderBrush="#CCC" BorderThickness="1" />
+                                    <ComboBox Width="120" Height="32" SelectedValue="{Binding SearchVM.SelectedMode}" SelectedValuePath="Content" Background="White" BorderBrush="#CCC" BorderThickness="1" Margin="0,0,10,0">
+                                        <ComboBoxItem Content="Poem"/>
+                                        <ComboBoxItem Content="Sentence"/>
+                                        <ComboBoxItem Content="Writer"/>
+                                    </ComboBox>
+                                    <Button Content="🔍 搜索" Height="32" Width="80" Margin="0"
+                    Background="#007ACC" Foreground="White" FontWeight="Bold"
+                    BorderBrush="#007ACC" BorderThickness="1"
+                    Cursor="Hand" Click="OnSearchClick"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 数据库加载提示 -->
+                            <TextBlock Grid.Row="1" Text="数据库正在加载中…" FontSize="16"   Visibility="{Binding SearchVM.WaitVisibility}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                            <!-- 内容区域 -->
+                            <Border Grid.Row="2" CornerRadius="8" Padding="10" BorderBrush="#DDD" BorderThickness="1" >
+                                <Grid>
+                                    <!-- 搜索结果 -->
+                                    <ScrollViewer Visibility="{Binding SearchVM.SearchVisibility}">
+                                        <ItemsControl ItemsSource="{Binding SearchVM.Results}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border  Margin="5" Padding="8"  CornerRadius="4" BorderBrush="#CCC" BorderThickness="1">
+                                                        <TextBlock FontFamily="KaiTi" Text="{Binding DisplayText}" FontSize="20"  Cursor="Hand" MouseLeftButtonUp="OnResultClick"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+
+                                    <!-- 详情区域 -->
+                                    <ScrollViewer Grid.Row="2" HorizontalAlignment="Center" Visibility="{Binding SearchVM.DetailVisibility}" Margin="10">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding SearchVM.DetailContent}"
+                                                       FontSize="20"
+                                                       FontFamily="KaiTi"
+                                                       TextWrapping="Wrap"/>
+                                            <Button Content="← 返回"
+                Width="80"
+                Height="30"
+                Background="#FFB347"
+                BorderBrush="#CCC"
+                Cursor="Hand"
+                Click="OnBackClick"/>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid x:Name="ProgressOverlay"
+Visibility="Collapsed"
+Opacity="1"
+HorizontalAlignment="Center" 
+VerticalAlignment="Center"
+Panel.ZIndex="9999">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 动画角色层 -->
+                    <Canvas Grid.Row="0" Width="600" Height="60">
+                        <Image x:Name="BookCharacter"
+   Source="/Resources/Images/book.png"
+   Width="40" Height="40">
+                            <Image.RenderTransform>
+                                <TranslateTransform x:Name="CharacterTransform" X="0" Y="0"/>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Canvas>
+
+
+                    <ProgressBar x:Name="ImportProgressBar"
+    Width="600" Height="20"
+    Minimum="0" Maximum="100"
+    Value="0"
+    Grid.Row="1"
+    HorizontalAlignment="Center"/>
+
+                    <TextBlock x:Name="ProgressText"
+    Text="正在导入..."
+    FontSize="14"
+    Margin="10"
+    Grid.Row="2"
+    HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+            <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Visibility="{Binding ImportProgress.Visibility}">
+                <StackPanel>
+                    <TextBlock
+    Text="{Binding ImportProgress.Status}"
+
+    FontSize="14" Margin="10"/>
+                    
+                    <ProgressBar
+    Minimum="0"
+    Maximum="{Binding ImportProgress.Total}"
+    Value="{Binding ImportProgress.Current}"
+
+    Height="20" Margin="10"/>
+
+
+                </StackPanel>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

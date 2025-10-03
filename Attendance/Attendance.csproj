@@ -1,0 +1,127 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\add.png" />
+    <None Remove="Resources\Images\book.png" />
+    <None Remove="Resources\Images\import.png" />
+    <None Remove="Resources\Images\refresh.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\chinese-gushiwen\.git\config" />
+    <None Include="Resources\chinese-gushiwen\.git\description" />
+    <None Include="Resources\chinese-gushiwen\.git\HEAD" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\applypatch-msg.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\commit-msg.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\fsmonitor-watchman.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\post-update.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-applypatch.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-commit.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-merge-commit.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-push.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-rebase.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\pre-receive.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\prepare-commit-msg.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\push-to-checkout.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\sendemail-validate.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\hooks\update.sample" />
+    <None Include="Resources\chinese-gushiwen\.git\index" />
+    <None Include="Resources\chinese-gushiwen\.git\info\exclude" />
+    <None Include="Resources\chinese-gushiwen\.git\logs\HEAD" />
+    <None Include="Resources\chinese-gushiwen\.git\logs\refs\heads\master" />
+    <None Include="Resources\chinese-gushiwen\.git\logs\refs\remotes\origin\HEAD" />
+    <None Include="Resources\chinese-gushiwen\.git\objects\pack\pack-44c5c577601adfce657651ae606aadda23517304.idx" />
+    <None Include="Resources\chinese-gushiwen\.git\objects\pack\pack-44c5c577601adfce657651ae606aadda23517304.pack" />
+    <None Include="Resources\chinese-gushiwen\.git\objects\pack\pack-44c5c577601adfce657651ae606aadda23517304.rev" />
+    <None Include="Resources\chinese-gushiwen\.git\packed-refs" />
+    <None Include="Resources\chinese-gushiwen\.git\refs\heads\master" />
+    <None Include="Resources\chinese-gushiwen\.git\refs\remotes\origin\HEAD" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="PP.Wpf" Version="1.0.8" />
+    <PackageReference Include="SharpVectors" Version="1.8.5" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\chinese-gushiwen\.git\objects\info\" />
+    <Folder Include="Resources\chinese-gushiwen\.git\refs\tags\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\add.png" />
+    <Resource Include="Resources\Images\book.png" />
+    <Resource Include="Resources\Images\import.png" />
+    <Resource Include="Resources\Images\refresh.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen0-1000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen1001-2000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen2001-3000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen3001-4000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen4001-5000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen5001-6000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen6001-7000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen7001-8000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen8001-9000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\guwen\guwen9001-10000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\sentence\sentence1-10000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\writer\writer0-1000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\writer\writer1001-2000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\writer\writer2001-3000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chinese-gushiwen\writer\writer3001-4000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

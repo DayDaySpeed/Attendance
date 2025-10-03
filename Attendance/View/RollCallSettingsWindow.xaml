@@ -1,0 +1,499 @@
+﻿<Window x:Class="Attendance.View.RollCallSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Attendance"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:Converters="clr-namespace:Attendance.Converters"
+        xmlns:localBehaviors="clr-namespace:Attendance.Behaviors"
+        Title="点名设置" WindowState="Maximized">
+    <Window.Resources>
+        <Converters:GenderToBrushConverter x:Key="GenderToBrushConverter" />
+        <Converters:GenderAvailabilityConverter x:Key="GenderAvailabilityConverter"/>
+        <Converters:TailDigitAvailabilityConverter x:Key="TailDigitAvailabilityConverter"/>
+
+        <DropShadowEffect x:Key="DropShadowEffect"
+                  ShadowDepth="4"
+                  BlurRadius="20"
+                  Color="#44000000"
+                  Opacity="0.6" />
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+
+        <!-- 左侧学生列表 -->
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <!--初始显示-->
+            <ScrollViewer x:Name="OriginalScrollviewer"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto"
+                          Width="{Binding StudentPanelWidth}">
+
+                <Grid x:Name="StudentContainer" HorizontalAlignment="Left">
+                    <ItemsControl x:Name="OriginalItemsControl" ItemsSource="{Binding DisplayedStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel x:Name="StudentWrapPanel" Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="120" Height="140" CornerRadius="20" Margin="10"
+                      Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                      Effect="{StaticResource DropShadowEffect}"
+                      ToolTip="{Binding TooltipText}">
+                                    <Border.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    </Border.RenderTransform>
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                        To="1.05" Duration="0:0:0.2" />
+                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                        To="1.05" Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                        To="1.0" Duration="0:0:0.2" />
+                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                        To="1.0" Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </ScrollViewer>
+
+            <!--初始隐藏-->
+            <!--抽取一个-->
+            <ScrollViewer x:Name="OneScrolling"
+                          Visibility="Collapsed"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled"
+                          VerticalAlignment="Center"
+                          Width="{Binding StudentPanelWidth}">
+
+                <ItemsControl x:Name="OneItemsControl" ItemsSource="{Binding ScrollingStudents}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border VerticalAlignment="Center" Width="120" Height="140" CornerRadius="20" Margin="10"
+                                        Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                        Effect="{StaticResource DropShadowEffect}">
+
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </Border.RenderTransform>
+
+
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <!--抽取两个-->
+            <Grid VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer x:Name="LeftScrollViewer" Grid.Row="0"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Center"
+                              Width="{Binding StudentPanelWidth}"
+                              Margin="50">
+
+                    <ItemsControl x:Name="LeftItemsControl" ItemsSource="{Binding LeftScrollingStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"  FlowDirection="RightToLeft"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border VerticalAlignment="Center" Width="120" Height="140" CornerRadius="20" Margin="10"
+                            Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                            Effect="{StaticResource DropShadowEffect}">
+
+                                    <Border.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    </Border.RenderTransform>
+
+
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <ScrollViewer x:Name="RightScrollViewer" Grid.Row="1"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Center"
+                              Width="{Binding StudentPanelWidth}"
+                              Margin="50">
+
+                    <ItemsControl x:Name="RightItemsControl" ItemsSource="{Binding LeftScrollingStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"  FlowDirection="RightToLeft"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border VerticalAlignment="Center" Width="120" Height="140" CornerRadius="20" Margin="10"
+                                        Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                        Effect="{StaticResource DropShadowEffect}">
+
+                                    <Border.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    </Border.RenderTransform>
+
+
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+            <!--抽取三个-->
+            <Grid>
+
+                <!-- 左上滚动区域 -->
+                <ScrollViewer x:Name="TopLeftScrollViewer"
+
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Center">
+                    <ScrollViewer.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="-40" CenterX="120" CenterY="60"/>
+                            <TranslateTransform X="-50" Y="400"/>
+                        </TransformGroup>
+                    </ScrollViewer.RenderTransform>
+                    <ItemsControl x:Name="TopLeftItemsControl"
+                          ItemsSource="{Binding TopLeftStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="120" Height="140" Margin="10" CornerRadius="20"
+                                Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                Effect="{StaticResource DropShadowEffect}">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- 右上滚动区域 -->
+                <ScrollViewer x:Name="TopRightScrollViewer"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Center">
+                    <ScrollViewer.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="25" CenterX="120" CenterY="60"/>
+                            <TranslateTransform X="180" Y="-400"/>
+                        </TransformGroup>
+                    </ScrollViewer.RenderTransform>
+                    <ItemsControl x:Name="TopRightItemsControl"
+                          ItemsSource="{Binding TopRightStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="120" Height="140" Margin="10" CornerRadius="20"
+                                Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                Effect="{StaticResource DropShadowEffect}">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- 底部滚动区域 -->
+                <ScrollViewer x:Name="BottomScrollViewer"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Center"
+                              Width="{Binding StudentPanelWidth}">
+                    <ScrollViewer.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="25" CenterX="120" CenterY="60"/>
+                            <TranslateTransform X="-50" Y="-100"/>
+                        </TransformGroup>
+                    </ScrollViewer.RenderTransform>
+                    <ItemsControl x:Name="BottomItemsControl"
+                          ItemsSource="{Binding BottomStudents}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="120" Height="140" Margin="10" CornerRadius="20"
+                                Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                Effect="{StaticResource DropShadowEffect}">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+            </Grid>
+        </Grid>
+        <!-- 右侧设置区域 -->
+        <StackPanel x:Name="SettingsPanel"
+            Grid.Column="1"
+            Margin="0,20,0,0"
+            VerticalAlignment="Top">
+
+
+            <!-- 通用样式资源 -->
+            <StackPanel.Resources>
+                <Style TargetType="ComboBox">
+                    <Setter Property="BorderBrush" Value="#00CCCC"/>
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                    <Setter Property="Width" Value="250"/>
+                    <Setter Property="Margin" Value="0,0,0,20"/>
+                </Style>
+
+
+                <Style TargetType="Button">
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="12"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#00FFCC" Offset="0"/>
+                                <GradientStop Color="#6600CC" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <!-- ✅ 鼠标悬停时变换背景 -->
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FF00FF" Offset="0"/>
+                                        <GradientStop Color="#00FFFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <LinearGradientBrush x:Key="EGradientForeground" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#003300" Offset="0"/>
+                    <!-- 墨绿 -->
+                    <GradientStop Color="#00CCCC" Offset="0.5"/>
+                    <!-- 青蓝 -->
+                    <GradientStop Color="#6600CC" Offset="1"/>
+                    <!-- 紫色 -->
+                </LinearGradientBrush>
+
+            </StackPanel.Resources>
+
+            <!-- 标题 -->
+            <TextBlock Text="点名设置"
+               FontSize="28"
+               FontWeight="Bold"
+               Foreground="{StaticResource EGradientForeground}"
+               Margin="0,0,0,30"
+               />
+            <!-- 班级选择 -->
+            <TextBlock Text="选择班级：" FontSize="20"/>
+            
+            <ComboBox ItemsSource="{Binding Classes}"
+              SelectedItem="{Binding SelectedClass}"
+              DisplayMemberPath="Name"/>
+
+            <!-- 抽取人数 -->
+            <TextBlock Text="抽取人数：" FontSize="20"/>
+            <ComboBox SelectedItem="{Binding SelectedCount,Mode=TwoWay}" >
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:Int32}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <sys:Int32>1</sys:Int32>
+                        <sys:Int32>2</sys:Int32>
+                        <sys:Int32>3</sys:Int32>
+                        <sys:Int32>4</sys:Int32>
+                        <sys:Int32>5</sys:Int32>
+                        <sys:Int32>6</sys:Int32>
+                        <sys:Int32>7</sys:Int32>
+                        <sys:Int32>8</sys:Int32>
+                        <sys:Int32>9</sys:Int32>
+                        <sys:Int32>10</sys:Int32>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <!-- 学号末尾数字偏好 -->
+            <TextBlock Text="末尾数字偏好：" FontSize="20"/>
+            <ComboBox SelectedItem="{Binding SelectedTailDigit, Mode=TwoWay}" >
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="IsEnabled">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource TailDigitAvailabilityConverter}">
+                                    <!-- 当前 ComboBoxItem 的值（0–9） -->
+                                    <Binding/>
+                                    <!-- 学生集合 -->
+                                    <Binding Path="DataContext.DisplayedStudents" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:Int32}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <sys:Int32>-1</sys:Int32>
+                        <sys:Int32>0</sys:Int32>
+                        <sys:Int32>1</sys:Int32>
+                        <sys:Int32>2</sys:Int32>
+                        <sys:Int32>3</sys:Int32>
+                        <sys:Int32>4</sys:Int32>
+                        <sys:Int32>5</sys:Int32>
+                        <sys:Int32>6</sys:Int32>
+                        <sys:Int32>7</sys:Int32>
+                        <sys:Int32>8</sys:Int32>
+                        <sys:Int32>9</sys:Int32>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+
+
+            <!-- 性别偏好 -->
+            <TextBlock Text="性别偏好：" FontSize="20"/>
+            <ComboBox SelectedItem="{Binding SelectedGenderPreference, Mode=TwoWay}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding}" Value="男">
+                                <Setter Property="IsEnabled">
+                                    <Setter.Value>
+                                        <Binding Path="DataContext.DisplayedStudents"
+                                     RelativeSource="{RelativeSource AncestorType=ComboBox}"
+                                     Converter="{StaticResource GenderAvailabilityConverter}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding}" Value="女">
+                                <Setter Property="IsEnabled">
+                                    <Setter.Value>
+                                        <Binding Path="DataContext.DisplayedStudents"
+                                     RelativeSource="{RelativeSource AncestorType=ComboBox}"
+                                     Converter="{StaticResource GenderAvailabilityConverter}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <sys:String>全部</sys:String>
+                        <sys:String>男</sys:String>
+                        <sys:String>女</sys:String>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+
+
+
+
+            <!-- 开始按钮 -->
+            <Button Content="开始点名" Width="200" Height="50"
+        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,30"
+        Click="StartRollCall_Click"/>
+        </StackPanel>
+        <!-- 浮层动画容器 -->
+        <Canvas x:Name="OverlayCanvas"
+            IsHitTestVisible="False"
+            Panel.ZIndex="999"
+            Background="Transparent" />
+    </Grid>
+</Window>

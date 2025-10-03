@@ -1,0 +1,113 @@
+﻿<Window x:Class="Attendance.ClassDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Attendance"
+        xmlns:localBehaviors="clr-namespace:Attendance.Behaviors"
+        xmlns:Converters="clr-namespace:Attendance.Converters"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        Title="班级详情" Height="600" Width="800" Background="#F5F5F5">
+
+    <Window.Resources>
+        <Converters:GenderToBrushConverter x:Key="GenderToBrushConverter" />
+
+        <DropShadowEffect x:Key="DropShadowEffect"
+                  ShadowDepth="6"
+                  BlurRadius="15"
+                  Color="#66000000"
+                  Opacity="0.5" />
+
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 顶部编辑框 -->
+        <TextBox Grid.Row="0"
+                 Text="{Binding ClassData.Name, Mode=TwoWay}"
+                 FontSize="28" FontWeight="SemiBold"
+                 HorizontalAlignment="Center"
+                 Width="auto"
+                 Margin="0,0,0,20">
+            <i:Interaction.Behaviors>
+                <localBehaviors:SmartEditBehavior />
+            </i:Interaction.Behaviors>
+        </TextBox>
+
+        <!-- 操作按钮 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <Button Command="{Binding AddStudentCommand}" Content="➕ 添加" Margin="10" />
+            <Button Command="{Binding DeleteStudentCommand}" Content="🗑 删除" Margin="10" CommandParameter="{Binding SelectedStudent}" />
+            <Button Command="{Binding EditStudentCommand}" Content="✏️ 修改" Margin="10" CommandParameter="{Binding SelectedStudent}" />
+        </StackPanel>
+
+        <!-- 学生卡片展示 -->
+        <ScrollViewer Grid.Row="2">
+          
+            <ItemsControl ItemsSource="{Binding Students}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="120" Height="120" CornerRadius="20" Margin="10"
+                                Background="{Binding Gender, Converter={StaticResource GenderToBrushConverter}}"
+                                Effect="{StaticResource DropShadowEffect}"
+                                ToolTip="{Binding TooltipText}">
+
+
+                            <i:Interaction.Behaviors>
+
+                                <localBehaviors:StudentCardInteractionBehavior
+                                    SelectCommand="{Binding DataContext.SelectStudentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    AddCommand="{Binding DataContext.AddStudentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    EditCommand="{Binding DataContext.EditStudentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    DeleteCommand="{Binding DataContext.DeleteStudentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    SelectedStudent="{Binding DataContext.SelectedStudent, RelativeSource={RelativeSource AncestorType=ItemsControl}, Mode=TwoWay}"
+                                    HighlightBrush="{StaticResource RainbowBrush}"/>
+                            </i:Interaction.Behaviors>
+
+                          
+
+
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                             To="1.05" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                             To="1.05" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                             To="1.0" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                             To="1.0" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -1,0 +1,254 @@
+﻿<Application x:Class="Attendance.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:Attendance"
+             Startup="Application_Startup">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="/Resources/icons.xaml"/>
+                
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--彩虹色-->
+            <LinearGradientBrush x:Key="RainbowBrush" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="Red" Offset="0"/>
+                <GradientStop Color="Orange" Offset="0.2"/>
+                <GradientStop Color="Yellow" Offset="0.4"/>
+                <GradientStop Color="Green" Offset="0.6"/>
+                <GradientStop Color="Blue" Offset="0.8"/>
+                <GradientStop Color="Purple" Offset="1"/>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="Gradientgray" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#E0E0E0" Offset="0.0" />
+                <GradientStop Color="#F5F5F5" Offset="0.5" />
+                <GradientStop Color="#D0D0D0" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!--全局设置ScrollBar滚动条-->
+                <Style  TargetType="ScrollBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Width" Value="8"/>
+                <Setter Property="Opacity" Value="0"/>
+                <!-- 初始完全透明 -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid x:Name="Root" Background="Transparent">
+                                <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                    <Track.Thumb>
+                                        <Thumb>
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border x:Name="ThumbBorder"
+                                                CornerRadius="4"
+                                                Margin="2">
+                                                        <Border.Background>
+                                                            <!-- 默认半透明深灰渐变 -->
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                <GradientStop Color="#66000000" Offset="0"/>
+                                                                <GradientStop Color="#99000000" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <!-- 悬停滑块时高亮 -->
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="ThumbBorder" Property="Background">
+                                                                <Setter.Value>
+                                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                        <GradientStop Color="#AA007ACC" Offset="0"/>
+                                                                        <GradientStop Color="#CC005A9E" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+
+                            <!-- 智能显隐触发 -->
+                            <ControlTemplate.Triggers>
+                                <!-- 鼠标进入滚动条区域 -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1" Duration="0:0:0.25"/>
+                                                <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                     To="10" Duration="0:0:0.25"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0" BeginTime="0:0:1" Duration="0:0:0.4"/>
+                                                <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                     To="8" Duration="0:0:0.25"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+
+                                <!-- 滚动时显示 -->
+                                <EventTrigger RoutedEvent="ScrollViewer.ScrollChanged">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                 To="1" Duration="0:0:0.2"/>
+                                            <!-- 停止滚动 1.5 秒后淡出 -->
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                 To="0" BeginTime="0:0:1.5" Duration="0:0:0.4"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--全局分割线属性设置-->
+            <Style TargetType="GridSplitter">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="ResizeBehavior" Value="PreviousAndNext"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GridSplitter">
+                            <Border x:Name="Border"
+                        CornerRadius="3"
+                        Background="{TemplateBinding Background}">
+                                <Grid>
+                                    <Rectangle x:Name="VerticalLine"
+                                   Width="2"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Stretch"
+                                   Fill="#33000000"/>
+                                    <Rectangle x:Name="HorizontalLine"
+                                   Height="2"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Stretch"
+                                   Fill="#33000000"
+                                   Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- 悬停时柔和高亮 -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#11007ACC"/>
+                                    <Setter TargetName="VerticalLine" Property="Fill" Value="#FF007ACC"/>
+                                    <Setter TargetName="HorizontalLine" Property="Fill" Value="#FF007ACC"/>
+                                </Trigger>
+
+                                <!-- 拖动时颜色加深 -->
+                                <Trigger Property="IsDragging" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#22007ACC"/>
+                                    <Setter TargetName="VerticalLine" Property="Fill" Value="#FF005A9E"/>
+                                    <Setter TargetName="HorizontalLine" Property="Fill" Value="#FF005A9E"/>
+                                </Trigger>
+
+                                <!-- 横向分割线（上下） -->
+                                <Trigger Property="ResizeDirection" Value="Rows">
+                                    <Setter TargetName="VerticalLine" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="HorizontalLine" Property="Visibility" Value="Visible"/>
+                                    <Setter Property="Height" Value="6"/>
+                                    <Setter Property="Width" Value="Auto"/>
+                                </Trigger>
+
+                                <!-- 纵向分割线（左右） -->
+                                <Trigger Property="ResizeDirection" Value="Columns">
+                                    <Setter TargetName="VerticalLine" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="HorizontalLine" Property="Visibility" Value="Collapsed"/>
+                                    <Setter Property="Width" Value="6"/>
+                                    <Setter Property="Height" Value="Auto"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+            <!--全局菜单设置-->
+            <Style TargetType="MenuItem">
+                <Setter Property="FontFamily" Value="Microsoft YaHei" />
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+
+            <!-- 圆角按钮样式 -->
+            <Style x:Key="RoundedGlowButton" TargetType="Button">
+                <Setter Property="Background" Value="#2196F3"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Height" Value="36"/>
+                <Setter Property="Width" Value="100"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#42A5F5"/>
+                                    <Setter TargetName="border" Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="#2196F3" BlurRadius="10" ShadowDepth="0"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#1976D2"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 圆角输入框样式 -->
+            <Style TargetType="TextBox" x:Key="RoundedTextBox">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Height" Value="34"/>
+                <Setter Property="Padding" Value="6"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="#AAA"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+    
+</Application>
