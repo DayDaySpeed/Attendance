@@ -58,8 +58,10 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 
 <img width="654" height="1294" alt="屏幕截图 2025-10-04 194403" src="https://github.com/user-attachments/assets/75b9d01f-b785-4a8f-b0d4-a8dcb2f0485e" />
 
+<img width="897" height="850" alt="屏幕截图 2025-10-04 204711" src="https://github.com/user-attachments/assets/4d554921-d9eb-482d-8efe-3f5db7a7b2d9" />
+
 时间主要展示，系统时间，日期，星期，IP
-<img width="654" height="1294" alt="屏幕截图 2025-10-04 194403" src="https://github.com/user-attachments/assets/90ee783a-6ded-4ee9-b961-54868b810bb7" />
+
 
 
 ## 每日一言系统
