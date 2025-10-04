@@ -23,8 +23,7 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 抽取动画我只单独定义了抽一人，抽二人，抽三人的，剩下的四到十人都采用相同的动画
 
 抽取设置：可以设置人数，学号末尾数字，和性别
-
-![image-20251004204633168](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251004204633168.png)
+<img width="2559" height="1364" alt="屏幕截图 2025-10-04 204445" src="https://github.com/user-attachments/assets/6cd3c628-5c83-45fd-90ca-6c22dbe67247" />
 
 ## 诗词系统
 
