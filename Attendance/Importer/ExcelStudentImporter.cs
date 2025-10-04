@@ -85,7 +85,9 @@ namespace Attendance.Importer
                                 case "name":
                                     if (string.IsNullOrEmpty(cellValue))
                                     {
+                                        student.Name = "";
                                         hasName = false;
+                                        importLog.Add($"⚠️ 行 {row.RowNumber()} 列 {i + 1}: 姓名为空，已设为 \"\"");
                                     }
                                     else
                                     {
@@ -123,17 +125,18 @@ namespace Attendance.Importer
                             }
                         }
 
-                        if (hasName)
+                        if (hasName || student.StudentNumber != 0)
                         {
-                            ClassStorageService.AddStudent(student); // 插入数据库并获取 id
-                            targetClass.Students.Add(student);       // 添加到内存集合
+                            ClassStorageService.AddStudent(student);
+                            targetClass.Students.Add(student);
                             successCount++;
                         }
                         else
                         {
-                            importLog.Add($"⚠️ 跳过行 {row.RowNumber()}: 姓名为空");
+                            importLog.Add($"⚠️ 跳过行 {row.RowNumber()}: 姓名和学号都为空或无效");
                             skippedCount++;
                         }
+
 
                         processedRows++;
                         if (progress != null && totalRows > 0)

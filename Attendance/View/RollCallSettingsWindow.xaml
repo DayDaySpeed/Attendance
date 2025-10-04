@@ -8,7 +8,8 @@
         Title="点名设置" WindowState="Maximized">
     <Window.Resources>
         <Converters:GenderToBrushConverter x:Key="GenderToBrushConverter" />
-        <Converters:GenderAvailabilityConverter x:Key="GenderAvailabilityConverter"/>
+        <Converters:MaleAvailabilityConverter x:Key="MaleAvailabilityConverter"/>
+        <Converters:FeMaleAvailabilityConverter x:Key="FeMaleAvailabilityConverter"/>
         <Converters:TailDigitAvailabilityConverter x:Key="TailDigitAvailabilityConverter"/>
 
         <DropShadowEffect x:Key="DropShadowEffect"
@@ -455,7 +456,7 @@
                                     <Setter.Value>
                                         <Binding Path="DataContext.DisplayedStudents"
                                      RelativeSource="{RelativeSource AncestorType=ComboBox}"
-                                     Converter="{StaticResource GenderAvailabilityConverter}"/>
+                                     Converter="{StaticResource MaleAvailabilityConverter}"/>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
@@ -464,7 +465,7 @@
                                     <Setter.Value>
                                         <Binding Path="DataContext.DisplayedStudents"
                                      RelativeSource="{RelativeSource AncestorType=ComboBox}"
-                                     Converter="{StaticResource GenderAvailabilityConverter}"/>
+                                     Converter="{StaticResource FeMaleAvailabilityConverter}"/>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>

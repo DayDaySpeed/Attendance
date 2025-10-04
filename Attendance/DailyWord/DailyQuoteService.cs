@@ -1,14 +1,13 @@
 ﻿using Attendance.Poems;
 using Attendance.Utils;
 using Microsoft.Data.Sqlite;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace Attendance.Services
+
+namespace Attendance.DailyWord
 {
     public class DailyQuoteService : ObservableObject
     {

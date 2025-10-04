@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 
 
 
@@ -25,7 +26,7 @@ namespace Attendance
         public MainWindow()
         {
             InitializeComponent();
-           
+            this.Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/images/icon.ico"));
             DataContext = new MainViewModel(); // 绑定到 ViewModel
 
         }
@@ -89,8 +90,8 @@ namespace Attendance
                     if (vm != null && newclass != null)
                     {
                         vm.Classes.Add(newclass);
-                        //保存
-                        ClassStorageService.AddClass(newclass);
+                        ////保存
+                        //ClassStorageService.AddClass(newclass);
                     }
 
                     //导入结果

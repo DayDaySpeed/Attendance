@@ -1,8 +1,8 @@
 ﻿using Attendance.Classes;
+using Attendance.DailyWord;
 using Attendance.Importer;
 using Attendance.Poems;
 using Attendance.PoemsSearch;
-using Attendance.Services;
 using Attendance.Theme;
 using Attendance.Utils;
 using Attendance.weather;

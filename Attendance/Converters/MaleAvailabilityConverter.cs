@@ -7,16 +7,17 @@ using Attendance.Classes;
 
 namespace Attendance.Converters
 {
-    public class GenderAvailabilityConverter : IValueConverter
+    public class MaleAvailabilityConverter : IValueConverter
     {
         // value 是 DisplayedStudents 集合
+        //判断男
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var students = value as ObservableCollection<Student>;
             if (students == null || students.Count == 0)
                 return false;
 
-            return students.Any(s => s.Gender != null);
+            return students?.Any(s => s.Gender == Student.GenderEnum.male) ?? false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

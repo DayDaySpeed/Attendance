@@ -54,21 +54,21 @@ namespace Attendance.Animation
             // 3️⃣ 随机抽取不重复学生
             var random = new Random();
             var winners = new List<Student>();
-            var usedIds = new HashSet<long>();
+            var usedIds = new HashSet<int>();
 
             while (winners.Count < count && weightedPool.Count > 0)
             {
                 int index = random.Next(weightedPool.Count);
                 var candidate = weightedPool[index];
 
-                if (!usedIds.Contains(candidate.StudentNumber))
+                if (!usedIds.Contains(candidate.id))
                 {
                     winners.Add(candidate);
-                    usedIds.Add(candidate.StudentNumber);
+                    usedIds.Add(candidate.id);
                 }
 
                 // 移除所有该学生的权重副本
-                weightedPool.RemoveAll(s => s.StudentNumber == candidate.StudentNumber);
+                weightedPool.RemoveAll(s => s.id == candidate.id);
             }
 
             return winners;

@@ -1,4 +1,5 @@
-﻿using Attendance.Utils;
+﻿using Attendance.Poems;
+using Attendance.Utils;
 using Microsoft.Data.Sqlite;
 
 using System.Collections.ObjectModel;
@@ -6,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 
 
-namespace Attendance.Poems
+namespace Attendance.DailyWord
 {
     public class DailyPoemViewModel : ObservableObject
     {
@@ -115,7 +116,7 @@ namespace Attendance.Poems
 
                 PoemLines.Clear(); // 清空旧数据
                 // ✅ 立即适配高度，确保显示内容
-                if (App.Current.MainWindow?.DataContext is MainViewModel vm)
+                if (System.Windows.Application.Current.MainWindow?.DataContext is MainViewModel vm)
                 {
                     AdaptPoemToHeight(vm.LastScrollViewerHeight);
                 }
