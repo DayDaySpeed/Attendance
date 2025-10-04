@@ -37,7 +37,8 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 
 操作：可以刷新，鼠标悬停停止滚动
 
-![屏幕截图 2025-10-04 193500](\\DESKTOP-LEFT\Pictures\Screenshots\屏幕截图 2025-10-04 193500.png)
+<img width="655" height="521" alt="屏幕截图 2025-10-04 193500" src="https://github.com/user-attachments/assets/b80b125c-91c3-4dbe-b1a8-93af659fcd4c" />
+
 
 #### 搜索板块
 
@@ -45,7 +46,9 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 
 诗词从标题和内容搜，作者从作者名字和生平搜，名句从内容和来源搜
 
-展示50条搜索结果![屏幕截图 2025-10-04 204333](\\DESKTOP-LEFT\Pictures\Screenshots\屏幕截图 2025-10-04 204333.png)
+展示50条搜索结果
+
+<img width="896" height="461" alt="屏幕截图 2025-10-04 204333" src="https://github.com/user-attachments/assets/64c08427-fff2-41e7-a36e-3d381c9036f2" />
 
 ## 天气系统
 
@@ -53,7 +56,11 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 
 主要展示一些免费的服务，有温度，日出日落，空气质量，月相，太阳高度角，预警信息，和天气降水预报
 
-![屏幕截图 2025-10-04 204711](\\DESKTOP-LEFT\Pictures\Screenshots\屏幕截图 2025-10-04 204711.png)时间主要展示，系统时间，日期，星期，IP![屏幕截图 2025-10-04 194403](\\DESKTOP-LEFT\Pictures\Screenshots\屏幕截图 2025-10-04 194403.png)
+<img width="654" height="1294" alt="屏幕截图 2025-10-04 194403" src="https://github.com/user-attachments/assets/75b9d01f-b785-4a8f-b0d4-a8dcb2f0485e" />
+
+时间主要展示，系统时间，日期，星期，IP
+<img width="654" height="1294" alt="屏幕截图 2025-10-04 194403" src="https://github.com/user-attachments/assets/90ee783a-6ded-4ee9-b961-54868b810bb7" />
+
 
 ## 每日一言系统
 
@@ -63,10 +70,12 @@ https://gitee.com/statry/attendance/releases/tag/v1.0 [gitee]
 
 **每日一言**来源APIhttps://v1.hitokoto.cn/
 
-![image-20251004204744439](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251004204744439.png)
+<img width="713" height="522" alt="屏幕截图 2025-10-04 220111" src="https://github.com/user-attachments/assets/257e31cd-516d-46ee-be97-0133d00e5f89" />
+
 
 ## 整体一览
 
 **每条 分割线都可以拉伸，可以仅仅展示感兴趣的区域，支持浅深两种主题，还可以导入背景**
 
-![屏幕截图 2025-10-04 204824](\\DESKTOP-LEFT\Pictures\Screenshots\屏幕截图 2025-10-04 204824.png)
+<img width="2559" height="1367" alt="屏幕截图 2025-10-04 204824" src="https://github.com/user-attachments/assets/cab68279-517f-4c39-bc17-5a8cd7e2a2ee" />
+
