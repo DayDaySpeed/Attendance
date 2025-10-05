@@ -7,9 +7,9 @@ namespace Attendance.Theme
     {
 
         ////白字黑底
-        public static ThemePayload BlackBackground => new() { Background = Brushes.Black, Foreground = Brushes.White };
+        public static Theme BlackBackground => new() { Background = Brushes.Black, Foreground = Brushes.White };
         ////黑字白底
-        public static ThemePayload WhiteBackground => new() { Background = Brushes.White , Foreground = Brushes.Black };
+        public static Theme WhiteBackground => new() { Background = Brushes.White , Foreground = Brushes.Black };
        
     }
 

@@ -152,7 +152,7 @@ namespace Attendance
             ImportBackgroundCommand = new RelayCommand(ImportBackground);
 
             //绑定切换主题命令
-            SetThemeCommand = new RelayCommand<ThemePayload>(SetTheme);
+            SetThemeCommand = new RelayCommand<Theme.Theme>(SetTheme);
             //绑定添加班级命令
             AddClassCommand = new RelayCommand(AddClass);
             //绑定刷新班级命令
@@ -206,7 +206,7 @@ namespace Attendance
         }
 
         //设置主题方法
-        private void SetTheme(ThemePayload theme)
+        private void SetTheme(Theme.Theme theme)
         {
             if (theme.Background != null)
                 Background = theme.Background;

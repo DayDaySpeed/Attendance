@@ -21,6 +21,12 @@
 	  <Page Remove="Resources\chinese-gushiwen\.git\**" />
 	</ItemGroup>
 
+
+
+	<ItemGroup>
+	  <Compile Remove="Poems\PoemRepository.cs" />
+	</ItemGroup>
+
   <ItemGroup>
     <None Remove="Resources\Images\add.png" />
     <None Remove="Resources\Images\import.png" />

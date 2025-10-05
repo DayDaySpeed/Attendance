@@ -87,7 +87,7 @@ namespace Attendance.Animation
                 }
 
                 // 高亮当前卡片
-                var border = FindVisualChild<Border>(container);
+                var border = AnimatorService.FindVisualChild<Border>(container);
                 if (border != null)
                 {
                     // 1️⃣ 设置发光阴影效果（更亮、更大、更明显）
@@ -231,7 +231,7 @@ namespace Attendance.Animation
                 var container = itemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
                 if (container == null) continue;
 
-                var originalBorder = FindVisualChild<Border>(container);
+                var originalBorder = AnimatorService.FindVisualChild<Border>(container);
                 if (originalBorder == null) continue;
 
                 var clonedBorder = CloneBorder(originalBorder);
@@ -376,28 +376,7 @@ namespace Attendance.Animation
         }
 
 
-
-
-
-
-
-
-        public List<Student> GetSelectedStudents() => selectedStudents;
-
-        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T typedChild)
-                    return typedChild;
-
-                var result = FindVisualChild<T>(child);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
+      
     }
 
 

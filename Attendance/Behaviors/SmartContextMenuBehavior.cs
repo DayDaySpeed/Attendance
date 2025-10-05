@@ -7,6 +7,7 @@ using System.Windows.Media;
 
 namespace Attendance.Behaviors
 {
+    //智能右键菜单行为，根据用户点击的位置自动弹出不同的上下文菜单
     public class SmartContextMenuBehavior : Behavior<ListBox>
     {
         public ContextMenu ItemContextMenu { get; set; }

@@ -15,6 +15,7 @@ namespace Attendance.Behaviors
 {
     public class SmartEditBehavior : Behavior<TextBox>
     {
+        //智能编辑行为
         private string originalText;
 
         protected override void OnAttached()

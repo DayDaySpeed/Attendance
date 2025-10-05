@@ -9,7 +9,7 @@ using System.Windows.Media;
 namespace Attendance.Theme
 {
 
-    public class ThemePayload
+    public class Theme
     {
         public Brush? Background { get; set; }
         public Brush? Foreground { get; set; }
